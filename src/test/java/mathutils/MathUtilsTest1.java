@@ -1,23 +1,32 @@
 package mathutils;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class MathUtilsTest1 {
     MathUtils mu = new MathUtils();
 
     @Test
     void assertEqualTest(){
-        Assertions.assertEquals(3, mu.add(1, 2));
-        Assertions.assertEquals(2, mu.add(1, 1), () -> "hello world");
+        assertEquals(3, mu.add(1, 2));
+        assertEquals(2, mu.add(1, 1), () -> "hello world");
     }
 
     @Test
     void assertArrayTest(){
-        Assertions.assertArrayEquals(new int[]{1,2,3,4}, new int[]{1,2,3,4});
+        assertArrayEquals(new int[]{1,2,3,4}, new int[]{1,2,3,4});
     }
 
     @Test
@@ -25,47 +34,44 @@ class MathUtilsTest1 {
         Iterable<Integer> l1 = new ArrayList<>(Arrays.asList(1,2,3,4));
         Iterable<Integer> l2 = new ArrayList<>(Arrays.asList(1,2,3,4));
 
-        Assertions.assertIterableEquals(l1, l2);
+        assertIterableEquals(l1, l2);
     }
 
     @Test
     void assertNotNullTest(){
         String s = "A";
-        Assertions.assertNotNull(s);
+        assertNotNull(s);
     }
 
     @Test
     void assertTrueTest(){
         boolean t = true;
-        Assertions.assertTrue(t);
+        assertTrue(t);
     }
 
     @Test
     void assertFalseTest(){
         boolean t = false;
-        Assertions.assertFalse(t);
+        assertFalse(t);
     }
 
     @Test
     void assertThrowTest(){
-        Assertions.assertThrows(ArithmeticException.class,  () -> mu.divide(1,0));
+        assertThrows(ArithmeticException.class,  () -> mu.divide(1,0));
     }
 
     @Test
     void assertAllTest(){
-        Assertions.assertAll(
-                () -> Assertions.assertEquals(4, mu.add(2,2)),
-                () -> Assertions.assertEquals(4, mu.add(2,2)),
-                () -> Assertions.assertEquals(4, mu.add(2,2)),
-                () -> Assertions.assertEquals(4, mu.add(2,2))
-
+        assertAll(
+                () -> assertEquals(4, mu.add(2,2)),
+                () -> assertEquals(4, mu.add(2,2)),
+                () -> assertEquals(4, mu.add(2,2)),
+                () -> assertEquals(4, mu.add(2,2))
         );
     }
 
     @Test
     void assertFails(){
-        Assertions.fail("h");
+        fail("h");
     }
-
-
 }

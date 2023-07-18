@@ -2,10 +2,9 @@ package mathutils;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ForArrayTest {
-
     @Test
     void findMax() {
         ForArray m = new ForArray();

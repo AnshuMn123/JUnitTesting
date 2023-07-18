@@ -2,6 +2,7 @@ package mathutils;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -57,6 +58,7 @@ class MathUtilsTest {
     @Tag("Math")
     void add(){
         assertEquals(2, mu.add(1, 1), "the add method should add two number");
+        Assertions.assertEquals("s", "s", "b");
     }
 
     @Nested

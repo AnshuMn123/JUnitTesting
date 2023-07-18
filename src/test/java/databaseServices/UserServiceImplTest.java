@@ -16,9 +16,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -63,11 +64,9 @@ public class UserServiceImplTest {
         newUserDetails.put("lastName", "B");
 
         Map updateUserDetails = userService.updateUser(createdUserId, newUserDetails);
-        System.out.println(updateUserDetails.get("firstName") );
-        System.out.println(newUserDetails );
 
-//        Assertions.asser
-        assertEquals(newUserDetails.get("firstName"), (String)updateUserDetails.get("firstName"));
+        assertEquals(newUserDetails.get("firstName"), updateUserDetails.get("firstName"), "v");
+        assertEquals(newUserDetails.get("firstName"), updateUserDetails.get("firstName"));
         assertEquals(newUserDetails.get("lastName"), updateUserDetails.get("lastName"));
     }
 
@@ -85,6 +84,6 @@ public class UserServiceImplTest {
     @DisplayName("Delete user works")
     void testDeleteUser_whenProvidedWithValidUserId_returnsUserDetails() {
         userService.deleteUser(createdUserId);
-        assertNull(userService.getUserDetails(createdUserId));
+        assertNull(userService.getUserDetails(createdUserId), () -> "is null");
     }
 }
