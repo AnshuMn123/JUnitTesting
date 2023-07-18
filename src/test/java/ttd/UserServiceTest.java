@@ -11,7 +11,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ttd.model.User;
+import ttd.service.EmailNotificationException;
+import ttd.service.EmailVerificationService;
+import ttd.service.EmailVerificationServiceImpl;
 import ttd.service.UserService;
+import ttd.service.UserServiceException;
 import ttd.service.UserServiceImpl;
 import ttd.userRepository.UserRepository;
 
@@ -26,6 +30,9 @@ public class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    EmailVerificationServiceImpl emailVerificationService;
 
     String firstName;
     String lastName;
@@ -54,6 +61,8 @@ public class UserServiceTest {
         assertEquals(lastName, user.getLastName());
         assertEquals(email, user.getEmail());
         assertNotNull(user.getId());
+
+        Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any(User.class));
     }
 
     @Test
@@ -80,5 +89,51 @@ public class UserServiceTest {
 
         assertEquals(expectedExceptionMessage,thrown.getMessage(),
                     () -> "Exception error message is not correct");
+    }
+
+    @DisplayName("if save method cause runtimeexception then we throw customexception")
+    @Test
+    void testCreateUser_CustomException(){
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenThrow(RuntimeException.class);
+
+        assertThrows(UserServiceException.class, () -> {
+            userServiceImpl.createUser(firstName, lastName, email, password, repeatPassword);
+        }, () -> "should throw custom exception");
+
+    }
+
+    @DisplayName("email exception throwns")
+    @Test
+    void createUser_WhenEmailThrowException(){
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(true);
+
+        // it is shwing return type error bcasue this method is of void these
+        //Mockito.when(emailVerificationService.scheduleEmailConformation(Mockito.any(User.class))).thenThrow();
+
+        // so for these, we need to do these
+        Mockito.doThrow(EmailNotificationException.class)
+                .when(emailVerificationService)
+                .scheduleEmailConformation(Mockito.any(User.class));
+
+        // doNorthing doesnt throw any exception
+        Mockito.doNothing().when(emailVerificationService)
+                .scheduleEmailConformation(Mockito.any(User.class));
+
+        assertThrows(UserServiceException.class, () -> {
+            userServiceImpl.createUser(firstName, lastName, email, password, repeatPassword);
+        }, () -> "throw email exception");
+    }
+
+
+    @DisplayName("scheduled email confirmation is excuted")
+    @Test
+    void createUser_ScheduledEmailConfirmation(){
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(true);
+
+        Mockito.doCallRealMethod().when(emailVerificationService)
+                .scheduleEmailConformation(Mockito.any(User.class));
+
+
+        userServiceImpl.createUser(firstName, lastName, email, password, repeatPassword);
     }
 }

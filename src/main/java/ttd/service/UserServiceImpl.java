@@ -8,9 +8,11 @@ import java.util.UUID;
 
 public class UserServiceImpl implements UserService {
     UserRepository userRepository;
-
-    public UserServiceImpl(UserRepository userRepository) {
+    EmailVerificationService emailVerificationService;
+    public UserServiceImpl(UserRepository userRepository,
+                           EmailVerificationService emailVerificationService) {
         this.userRepository = userRepository;
+        this.emailVerificationService = emailVerificationService;
     }
 
 
@@ -37,17 +39,23 @@ public class UserServiceImpl implements UserService {
         // but it will not make any differrence or we are not using mocking in it
         // because we are creating instance of class as object.
 //        UserRepository userRepository = new UserRepositoryImpl();
-        userRepository.save(user);
+//        userRepository.save(user);
 
         // For mocking
-        boolean isCreated = userRepository.save(user);
 
-        if(!isCreated){
+        try{
+            userRepository.save(user);
+        }catch (RuntimeException ex){
             throw new UserServiceException("User were not created");
+        }
+
+
+        try{
+            emailVerificationService.scheduleEmailConformation(user);
+        }catch (RuntimeException ex){
+            throw new UserServiceException(ex.getMessage());
         }
 
         return user;
     }
-
-
 }
