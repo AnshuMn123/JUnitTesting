@@ -1,20 +1,32 @@
 package ttd;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.Extension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ttd.model.User;
 import ttd.service.UserService;
 import ttd.service.UserServiceImpl;
+import ttd.userRepository.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-    UserService userService;
+    @InjectMocks
+    UserServiceImpl userServiceImpl;
+
+    @Mock
+    UserRepository userRepository;
+
     String firstName;
     String lastName;
     String email;
@@ -23,7 +35,6 @@ public class UserServiceTest {
 
     @BeforeEach
     void init(){
-        userService = new UserServiceImpl();
         firstName = "Anshu";
         lastName = "Singh";
         email = "anshu@singh.com";
@@ -33,7 +44,10 @@ public class UserServiceTest {
 
     @Test
     void createUser_WhenDetailProvided(){
-        User user = userService.createUser(firstName, lastName, email, password, repeatPassword);
+        // mocking
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(true);
+
+        User user = userServiceImpl.createUser(firstName, lastName, email, password, repeatPassword);
 
         assertNotNull(user, "ajcnasj");
         assertEquals(firstName, user.getFirstName(), "ad");
@@ -48,7 +62,7 @@ public class UserServiceTest {
         String expectedExceptionMessage = "User's firstname can't be null";
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () ->
-                userService.createUser(firstName, lastName, email, password, repeatPassword),
+                        userServiceImpl.createUser(firstName, lastName, email, password, repeatPassword),
                 () -> expectedExceptionMessage);
 
         assertEquals(expectedExceptionMessage, thrown.getMessage(), () -> "error massage is not same");
@@ -61,7 +75,7 @@ public class UserServiceTest {
         String expectedExceptionMessage = "User's last name is empty";
 
         IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, ()-> {
-            userService.createUser(firstName, lastName, email, password, repeatPassword); },
+                    userServiceImpl.createUser(firstName, lastName, email, password, repeatPassword); },
                 () -> "Empty last name should have caused an Illegal Argument Exception");
 
         assertEquals(expectedExceptionMessage,thrown.getMessage(),

@@ -29,7 +29,7 @@ public class User {
         return email;
     }
 
-    public Object getId() {
+    public String getId() {
         return id;
     }
 }
